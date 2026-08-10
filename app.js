@@ -35,6 +35,7 @@ let activeIndex = 0;
 let dragging = false;
 let dragDistance = 0;
 let pointerX = 0;
+let pointerStartX = 0;
 let lastPointerTime = 0;
 let lastMoveAt = 0;
 let hoverPaused = false;
@@ -44,6 +45,7 @@ let snapAfterInertia = false;
 let lastFrameTime = performance.now();
 
 const dragSensitivity = 0.22;
+const dragThreshold = 10;
 const maxVelocity = 0.24;
 
 function renderGallery() {
@@ -183,6 +185,7 @@ viewport.addEventListener("pointerdown", (event) => {
   snapId += 1;
   dragDistance = 0;
   pointerX = event.clientX;
+  pointerStartX = event.clientX;
   lastPointerTime = performance.now();
   lastMoveAt = lastPointerTime;
   velocity = 0;
@@ -197,8 +200,8 @@ viewport.addEventListener("pointermove", (event) => {
   pointerX = event.clientX;
   lastPointerTime = now;
   if (delta !== 0) lastMoveAt = now;
-  dragDistance += Math.abs(delta);
-  if (dragDistance > 4 && !viewport.hasPointerCapture(event.pointerId)) {
+  dragDistance = Math.max(dragDistance, Math.abs(event.clientX - pointerStartX));
+  if (dragDistance > dragThreshold && !viewport.hasPointerCapture(event.pointerId)) {
     viewport.setPointerCapture(event.pointerId);
     document.body.classList.add("is-dragging");
   }
@@ -209,7 +212,7 @@ viewport.addEventListener("pointermove", (event) => {
 function endDrag(event) {
   if (!dragging) return;
   dragging = false;
-  snapAfterInertia = dragDistance > 8;
+  snapAfterInertia = dragDistance > dragThreshold;
   if (!snapAfterInertia || performance.now() - lastMoveAt > 80) velocity = 0;
   if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
   document.body.classList.remove("is-dragging");
@@ -224,9 +227,9 @@ viewport.addEventListener("click", (event) => {
   if (!link) return;
   const index = Number(link.closest(".gallery-card").dataset.index);
 
-  if (dragDistance > 8 || index !== activeIndex) {
+  if (dragDistance > dragThreshold || index !== activeIndex) {
     event.preventDefault();
-    if (dragDistance <= 8) rotateTo(index);
+    if (dragDistance <= dragThreshold) rotateTo(index);
   }
 });
 
