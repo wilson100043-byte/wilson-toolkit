@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Wilson’s Toolkit 是提供同事快速找到實用小工具的共用入口。"
+    />
+    <meta name="theme-color" content="#f5f4ef" />
+    <title>Wilson’s Toolkit</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%23F5F4EF'/><path d='M8 32h48' stroke='%231268E8' stroke-width='6'/><circle cx='32' cy='32' r='12' fill='%23F5F4EF' stroke='%2316253A' stroke-width='6'/></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <!--
+      THESIS: A shared tool entrance behaves like a transit service map, refusing the usual dark-tech card grid.
+      OWN-WORLD: Warm off-white, ink navy, cobalt and vermilion; route lines, station circles and squared wayfinding labels own every state.
+      STORY: Coworkers scan a line, choose a station and open the right utility; interviewers see practical systems thinking.
+      FIRST VIEWPORT: A slim masthead and compressed headline lead into three full-width service lines; the selected station docks into one detail strip and action.
+      FORM: Full-width horizontal route board, grounded candidate 1, seed 8c63d067.
+      FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
+    -->
+    <a class="skip-link" href="#tool-network">跳到工具路網</a>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Wilson’s Toolkit 首頁">
+        <svg class="brand__mark" viewBox="0 0 48 18" aria-hidden="true">
+          <path d="M3 9h42" />
+          <circle cx="18" cy="9" r="6" />
+          <circle cx="18" cy="9" r="2" />
+        </svg>
+        <span>Wilson’s Toolkit</span>
+      </a>
+      <nav aria-label="主要導覽">
+        <a class="nav-link is-current" href="#tool-network">工具</a>
+        <a class="nav-link" href="#about">關於</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="hero-title">
+        <h1 id="hero-title">Small tools. One clear network.</h1>
+        <p>把日常工作會用到的小工具，集中在一個清楚、快速的共用入口。</p>
+      </section>
+
+      <section id="tool-network" class="network" aria-labelledby="network-title">
+        <div class="section-heading">
+          <h2 id="network-title">工具路網</h2>
+        </div>
+        <div id="routes" class="routes" aria-live="polite"></div>
+
+        <article id="tool-detail" class="tool-detail" aria-live="polite">
+          <div class="tool-detail__identity">
+          <span id="detail-code" class="tool-code">W01</span>
+          <div>
+              <h3 id="detail-name">教授資料處理系統</h3>
+              <p id="detail-description">輸入公開師資頁網址，整理教授姓名、職稱與聯絡資料。</p>
+            </div>
+          </div>
+          <dl class="tool-detail__meta">
+            <div>
+              <dt>路線</dt>
+              <dd id="detail-line">LINE A</dd>
+            </div>
+            <div>
+              <dt>狀態</dt>
+              <dd id="detail-status" data-status="online">
+                <span aria-hidden="true"></span>
+                <span id="detail-status-label">可使用</span>
+              </dd>
+            </div>
+          </dl>
+          <a id="detail-action" class="tool-action" aria-disabled="true">
+            <span id="detail-action-label">Open tool</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h13M13 6l6 6-6 6" />
+            </svg>
+          </a>
+        </article>
+      </section>
+
+      <section class="directory" aria-labelledby="directory-title">
+        <div class="section-heading section-heading--wide">
+          <h2 id="directory-title">All tools at a glance</h2>
+          <p>所有工具都由同一份資料產生，新增與更新保持簡單。</p>
+        </div>
+        <ol id="tool-list" class="tool-list"></ol>
+      </section>
+
+      <section id="about" class="about" aria-labelledby="about-title">
+        <h2 id="about-title">Useful first. Presentable always.</h2>
+        <p>
+          這個入口優先服務實際工作：同事能快速找到工具，也讓每一個作品在需要展示時有清楚脈絡。
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>Wilson’s Toolkit</p>
+      <p>Static HTML · CSS · JavaScript</p>
+    </footer>
+  </body>
+</html>
