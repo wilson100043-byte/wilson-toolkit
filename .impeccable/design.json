@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-10T07:52:08Z",
+  "title": "Design System: Wilson's Toolkit — Floating Gallery",
+  "extensions": {
+    "colorMeta": {
+      "near-black": {
+        "role": "neutral",
+        "displayName": "Near Black",
+        "canonical": "#0a0a0a",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(24% 0 0)", "oklch(35% 0 0)", "oklch(47% 0 0)", "oklch(59% 0 0)", "oklch(71% 0 0)", "oklch(83% 0 0)", "oklch(95% 0 0)"]
+      },
+      "pearl": {
+        "role": "primary",
+        "displayName": "Pearl",
+        "canonical": "#f6f6f2",
+        "tonalRamp": ["oklch(15% 0.006 100)", "oklch(24% 0.006 100)", "oklch(35% 0.006 100)", "oklch(47% 0.006 100)", "oklch(59% 0.006 100)", "oklch(71% 0.006 100)", "oklch(83% 0.006 100)", "oklch(95% 0.006 100)"]
+      },
+      "muted-pearl": {
+        "role": "neutral",
+        "displayName": "Muted Pearl",
+        "canonical": "#9a9a96",
+        "tonalRamp": ["oklch(15% 0.005 100)", "oklch(24% 0.005 100)", "oklch(35% 0.005 100)", "oklch(47% 0.005 100)", "oklch(59% 0.005 100)", "oklch(71% 0.005 100)", "oklch(83% 0.005 100)", "oklch(95% 0.005 100)"]
+      },
+      "focus-blue": {
+        "role": "primary",
+        "displayName": "Focus Blue",
+        "canonical": "#b9d4ff",
+        "tonalRamp": ["oklch(15% 0.06 255)", "oklch(24% 0.07 255)", "oklch(35% 0.08 255)", "oklch(47% 0.09 255)", "oklch(59% 0.09 255)", "oklch(71% 0.08 255)", "oklch(83% 0.06 255)", "oklch(95% 0.025 255)"]
+      },
+      "panel-black": {
+        "role": "neutral",
+        "displayName": "Panel Black",
+        "canonical": "#111111",
+        "tonalRamp": ["oklch(15% 0 0)", "oklch(24% 0 0)", "oklch(35% 0 0)", "oklch(47% 0 0)", "oklch(59% 0 0)", "oklch(71% 0 0)", "oklch(83% 0 0)", "oklch(95% 0 0)"]
+      },
+      "indicator-gray": {
+        "role": "neutral",
+        "displayName": "Indicator Gray",
+        "canonical": "#555552",
+        "tonalRamp": ["oklch(15% 0.004 100)", "oklch(24% 0.004 100)", "oklch(35% 0.004 100)", "oklch(47% 0.004 100)", "oklch(59% 0.004 100)", "oklch(71% 0.004 100)", "oklch(83% 0.004 100)", "oklch(95% 0.004 100)"]
+      },
+      "ambient-pearl": {
+        "role": "neutral",
+        "displayName": "Ambient Pearl",
+        "canonical": "rgba(255, 255, 255, 0.035)",
+        "tonalRamp": ["rgba(255, 255, 255, 0.015)", "rgba(255, 255, 255, 0.025)", "rgba(255, 255, 255, 0.035)", "rgba(255, 255, 255, 0.05)", "rgba(255, 255, 255, 0.08)", "rgba(255, 255, 255, 0.12)", "rgba(255, 255, 255, 0.18)", "rgba(255, 255, 255, 0.26)"]
+      }
+    },
+    "typographyMeta": {
+      "title": {
+        "displayName": "Active Tool Title",
+        "purpose": "Names the active tool beneath its screenshot without competing with the image."
+      },
+      "label": {
+        "displayName": "Architectural Label",
+        "purpose": "Used for the compact wordmark and OPEN action."
+      }
+    },
+    "shadows": [
+      {
+        "name": "card-ambient",
+        "value": "0 2.6rem 6rem rgba(0, 0, 0, 0.58)",
+        "purpose": "Grounds screenshot cards softly at rest."
+      },
+      {
+        "name": "card-lift",
+        "value": "0 3.2rem 7.5rem rgba(0, 0, 0, 0.72)",
+        "purpose": "Deepens the active screenshot on hover or keyboard focus."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "The shared responsive easing for lifts, fades, and navigation state."
+      },
+      {
+        "name": "snap",
+        "value": "560ms quartic ease-out",
+        "purpose": "Settles the ring precisely on the selected card."
+      },
+      {
+        "name": "desktop-autoplay",
+        "value": "9000ms",
+        "purpose": "Advances the idle desktop gallery; disabled on mobile and for reduced motion."
+      },
+      {
+        "name": "card-float",
+        "value": "5.6s ease-in-out infinite",
+        "purpose": "Adds quiet staggered vertical drift to individual cards."
+      },
+      {
+        "name": "drag-inertia",
+        "value": "velocity × 0.94 per frame, then nearest-card snap",
+        "purpose": "Preserves horizontal drag momentum before settling."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "mobile",
+        "value": "42rem"
+      },
+      {
+        "name": "short-landscape",
+        "value": "max-height: 42rem and min-width: 42.01rem"
+      }
+    ],
+    "components": [
+      {
+        "name": "Wordmark",
+        "kind": "nav",
+        "refersTo": "wordmark",
+        "description": "Compact pearl signature fixed at the upper-left of the gallery.",
+        "html": "<a class=\"ds-wordmark\" href=\"#\">WILSON / TOOLS</a>",
+        "css": ".ds-wordmark { color: var(--color-text, #f6f6f2); font-family: Archivo, sans-serif; font-size: 0.76rem; font-weight: 600; letter-spacing: 0.08em; line-height: 1; text-decoration: none; } .ds-wordmark:hover { opacity: 0.78; } .ds-wordmark:focus-visible { outline: 0.15rem solid var(--color-focus, #b9d4ff); outline-offset: 0.3rem; }"
+      },
+      {
+        "name": "Screenshot Card",
+        "kind": "card",
+        "refersTo": "screenshot-card",
+        "description": "A real 16:10 product screenshot with soft depth and a restrained lift state.",
+        "html": "<a class=\"ds-card\" href=\"#\"><img class=\"ds-card-image\" src=\"assets/faculty-data.png\" alt=\"教授資料處理系統首頁畫面\"></a>",
+        "css": ".ds-card { display: block; width: min(36rem, 82vw); aspect-ratio: 16 / 10; border-radius: 1rem; color: inherit; outline-offset: 0.65rem; transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-card-image { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 1rem; box-shadow: 0 2.6rem 6rem rgba(0, 0, 0, 0.58); transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 420ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-card:hover { transform: translateY(-0.65rem) scale(1.025); } .ds-card:hover .ds-card-image { transform: scale(1.025); box-shadow: 0 3.2rem 7.5rem rgba(0, 0, 0, 0.72); } .ds-card:focus-visible { outline: 0.15rem solid var(--color-focus, #b9d4ff); transform: translateY(-0.65rem) scale(1.025); } .ds-card:active { transform: translateY(-0.25rem) scale(0.99); }"
+      },
+      {
+        "name": "Active Caption",
+        "kind": "custom",
+        "refersTo": "caption",
+        "description": "Transparent active-only tool label with a desktop OPEN affordance.",
+        "html": "<figcaption class=\"ds-caption\"><span class=\"ds-caption-name\">教授資料處理系統</span><span class=\"ds-caption-open\">OPEN</span></figcaption>",
+        "css": ".ds-caption { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 0.75rem; background: transparent; color: var(--color-text, #f6f6f2); font-family: Archivo, sans-serif; } .ds-caption-name { overflow: hidden; font-size: clamp(0.86rem, 1.35vw, 1.05rem); font-weight: 500; text-overflow: ellipsis; white-space: nowrap; } .ds-caption-open { color: var(--color-text, #f6f6f2); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.08em; } @media (max-width: 42rem) { .ds-caption-open { display: none; } }"
+      },
+      {
+        "name": "Ring Navigation",
+        "kind": "nav",
+        "description": "Generous button targets containing minimal dots; the current item becomes a pearl pill.",
+        "html": "<nav class=\"ds-ring-nav\" aria-label=\"選擇工具\"><button aria-label=\"顯示第一個工具\" aria-current=\"true\"></button><button aria-label=\"顯示第二個工具\"></button><button aria-label=\"顯示第三個工具\"></button><button aria-label=\"顯示第四個工具\"></button></nav>",
+        "css": ".ds-ring-nav { display: flex; gap: 0.6rem; padding: 0.7rem; } .ds-ring-nav button { width: 2.75rem; height: 2.75rem; padding: 0; border: 0; background: transparent; cursor: pointer; } .ds-ring-nav button::before { display: block; width: 0.38rem; height: 0.38rem; margin: auto; border-radius: 50%; background: #555552; content: \"\"; transition: width 240ms cubic-bezier(0.16, 1, 0.3, 1), background-color 240ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-ring-nav button[aria-current=\"true\"]::before, .ds-ring-nav button:hover::before, .ds-ring-nav button:focus-visible::before { width: 1.5rem; border-radius: 999px; background: var(--color-text, #f6f6f2); } .ds-ring-nav button:focus-visible { outline: 0.15rem solid var(--color-focus, #b9d4ff); outline-offset: 0.3rem; }"
+      },
+      {
+        "name": "Skip Link",
+        "kind": "nav",
+        "description": "Keyboard-only pearl utility that enters the viewport when focused.",
+        "html": "<a class=\"ds-skip\" href=\"#gallery\">跳到工具選擇</a>",
+        "css": ".ds-skip { display: inline-block; padding: 0.75rem 1rem; transform: translateY(-180%); border-radius: 0.5rem; background: var(--color-text, #f6f6f2); color: var(--color-bg, #0a0a0a); font-family: Archivo, sans-serif; text-decoration: none; transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1); } .ds-skip:focus, .ds-skip:focus-visible { transform: translateY(0); outline: 0.15rem solid var(--color-focus, #b9d4ff); outline-offset: 0.3rem; }"
+      }
+    ],
+    "narrative": {
+      "northStar": "The Quiet Orbit",
+      "overview": "Wilson's Toolkit is presented as a restrained exhibition rather than a conventional directory. A near-black field recedes behind a ring of real product screenshots, allowing visitors to recognize each tool visually before opening it. Pearl typography is deliberately scarce, and the interface avoids descriptive blocks, card codes, visible item counts, and decorative chrome. The signature is a full-viewport 3D ring: one large card faces the viewer while adjacent tools remain dimly visible at the edges. Soft depth, slow floating motion, inertial dragging, and precise snapping make the system spatial without becoming theatrical. This direction is anchored to design seed user-pinned-39b98dd9 and to the first direction contract in index.html.",
+      "keyCharacteristics": [
+        "Near-black and pearl restrained palette with only functional muted and focus colors.",
+        "Real 16:10 product screenshots are the dominant content and identity.",
+        "Full-screen 3D ring with one active card, visible peripheral cards, and minimal navigation.",
+        "Active-only caption on a transparent background; no visible card code or count.",
+        "Archivo throughout, with compact weights, sizes, and tracking.",
+        "Desktop timed snap, mobile manual control, hover lift, and drag inertia."
+      ],
+      "rules": [
+        {
+          "name": "The Pearl Is Rare Rule",
+          "body": "Use pearl only for active or essential information; its scarcity creates hierarchy.",
+          "section": "colors"
+        },
+        {
+          "name": "The Screenshot Owns Color Rule",
+          "body": "Interface chrome remains neutral so the real tool screenshots supply the scene's color and detail.",
+          "section": "colors"
+        },
+        {
+          "name": "The Minimum Type Rule",
+          "body": "If the screenshot or interaction already communicates the information, do not add a visible heading, description, card code, or item count.",
+          "section": "typography"
+        },
+        {
+          "name": "The Spatial Before Ornamental Rule",
+          "body": "Express hierarchy through ring position, opacity, scale, and soft elevation; do not add outlines, gradients, glass panels, or decorative borders.",
+          "section": "elevation"
+        }
+      ],
+      "dos": [
+        "Do keep the near-black field visually quiet so the screenshot remains the first read.",
+        "Do use authentic screenshots at 16:10 and preserve their full, recognizable interface.",
+        "Do reveal the transparent caption only for the active card.",
+        "Do preserve hover lift, keyboard focus, inertial dragging, and snap-to-card behavior.",
+        "Do keep desktop autoplay slow and pausable, and disable it on mobile and for reduced motion."
+      ],
+      "donts": [
+        "Don't add card codes, visible counts, descriptive paragraphs, category chips, or dashboard-style metadata.",
+        "Don't place captions on opaque panels or attach extra chrome to screenshot cards.",
+        "Don't introduce accent colors outside authentic screenshots except the functional focus color.",
+        "Don't flatten the gallery into a conventional grid or hide all peripheral cards.",
+        "Don't autoplay on mobile or override reduced-motion preferences."
+      ]
+    }
+  }
+}

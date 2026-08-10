@@ -1,150 +1,269 @@
-const routes = [
-  { id: "line-a", label: "LINE A", code: "A" },
-  { id: "line-b", label: "LINE B", code: "B" },
-  { id: "line-c", label: "LINE C", code: "C" },
-];
-
 const tools = [
   {
-    id: "faculty",
-    code: "W01",
-    line: "line-a",
     name: "教授資料處理系統",
-    description: "輸入學校或系所名稱與公開網址，整理教授姓名、職稱與聯絡資料。",
-    position: 24,
+    image: "assets/faculty-data.png",
     url: "https://faculty-data-tool.pages.dev/",
-    status: "online",
-    statusLabel: "可使用",
-    actionLabel: "Open tool",
   },
   {
-    id: "booklist",
-    code: "W02",
-    line: "line-b",
     name: "推薦書單生成及複本比對",
-    description: "產生推薦書單、比對館藏複本，並整理後續使用的 Excel 資料。",
-    position: 50,
+    image: "assets/booklist-generator.png",
     url: "https://wilson100043-byte.github.io/booklist-generator/",
-    status: "online",
-    statusLabel: "可使用",
-    actionLabel: "Open tool",
   },
   {
-    id: "monthly-report",
-    code: "W03",
-    line: "line-c",
     name: "書單月報轉換工具",
-    description: "安全檢查、整理並產生學校月報 Excel 新副本。",
-    position: 50,
+    image: "assets/monthly-report.png",
     url: "https://booklist-monthly-report.onrender.com/",
-    status: "online",
-    statusLabel: "可使用",
-    actionLabel: "Open tool",
+  },
+  {
+    name: "續訂回覆合併台",
+    image: "assets/renewal-reply-merge.png",
+    url: "https://wilson100043-byte.github.io/renewal-reply-merge/",
   },
 ];
 
-const routeColors = {
-  "line-a": "#1268e8",
-  "line-b": "#c93416",
-  "line-c": "#3e4a5d",
-};
+const viewport = document.querySelector("#gallery-viewport");
+const ring = document.querySelector("#gallery-ring");
+const nav = document.querySelector("#gallery-nav");
+const status = document.querySelector("#gallery-status");
+const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const mobileLayout = window.matchMedia("(max-width: 42rem)");
+const anglePerCard = 360 / tools.length;
 
-const routesElement = document.querySelector("#routes");
-const listElement = document.querySelector("#tool-list");
-const detailCode = document.querySelector("#detail-code");
-const detailName = document.querySelector("#detail-name");
-const detailDescription = document.querySelector("#detail-description");
-const detailLine = document.querySelector("#detail-line");
-const detailStatus = document.querySelector("#detail-status");
-const detailStatusLabel = document.querySelector("#detail-status-label");
-const detailAction = document.querySelector("#detail-action");
-const detailActionLabel = document.querySelector("#detail-action-label");
+let rotation = 0;
+let velocity = 0;
+let activeIndex = 0;
+let dragging = false;
+let dragDistance = 0;
+let pointerX = 0;
+let lastPointerTime = 0;
+let lastMoveAt = 0;
+let hoverPaused = false;
+let snapping = false;
+let snapId = 0;
+let snapAfterInertia = false;
+let lastFrameTime = performance.now();
 
-function validateTools() {
-  const ids = new Set(tools.map((tool) => tool.id));
-  if (ids.size !== tools.length || tools.some((tool) => !routes.find((route) => route.id === tool.line))) {
-    throw new Error("Tool entries need unique ids and valid route names.");
-  }
-}
+const dragSensitivity = 0.22;
+const maxVelocity = 0.24;
 
-function renderRoutes() {
-  routesElement.innerHTML = routes
-    .map((route) => {
-      const stations = tools
-        .filter((tool) => tool.line === route.id)
-        .map(
-          (tool) => `
-            <button
-              class="station"
-              type="button"
-              style="--station-x: ${tool.position}%"
-              data-tool-id="${tool.id}"
-              aria-pressed="${tool.id === tools[0].id}"
-            >
-              <span class="station__dot" aria-hidden="true"></span>
-              <span class="station__label">
-                <span class="station__code">${tool.code}</span>
-                <span class="station__name">${tool.name}</span>
-              </span>
-            </button>`,
-        )
-        .join("");
-
-      return `
-        <article class="route" data-line="${route.id}" aria-labelledby="route-${route.id}">
-          <h3 id="route-${route.id}" class="route__label">
-            <span class="route__symbol">${route.code}</span>
-            ${route.label}
-          </h3>
-          <div class="route__track">${stations}</div>
-        </article>`;
-    })
-    .join("");
-}
-
-function renderDirectory() {
-  listElement.innerHTML = tools
+function renderGallery() {
+  ring.innerHTML = tools
     .map(
-      (tool) => `
-        <li style="--tool-color: ${routeColors[tool.line]}">
-          <span class="tool-list__code">${tool.code}</span>
-          <span class="tool-list__name">${tool.name}</span>
-          <span class="tool-list__description">${tool.description}</span>
-          <span class="tool-list__line">${routes.find((route) => route.id === tool.line).label}</span>
-        </li>`,
+      (tool, index) => `
+        <article
+          class="gallery-card${index === 0 ? " is-active" : ""}"
+          style="--card-angle: ${index * anglePerCard}deg; --float-delay: ${index * -1.2}s"
+          data-index="${index}"
+        >
+          <a
+            class="gallery-card__link"
+            href="${tool.url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="開啟${tool.name}"
+            ${index === 0 ? "" : 'tabindex="-1"'}
+          >
+            <div class="gallery-card__float">
+              <figure class="gallery-card__surface">
+                <img
+                  class="gallery-card__image"
+                  src="${tool.image}"
+                  alt="${tool.name}首頁畫面"
+                  draggable="false"
+                />
+                <figcaption class="gallery-card__meta">
+                  <span class="gallery-card__name">${tool.name}</span>
+                  <span class="gallery-card__open">OPEN</span>
+                </figcaption>
+              </figure>
+            </div>
+          </a>
+        </article>`,
+    )
+    .join("");
+
+  nav.innerHTML = tools
+    .map(
+      (tool, index) => `
+        <button
+          type="button"
+          data-index="${index}"
+          aria-label="顯示${tool.name}"
+          aria-current="${index === 0}"
+        ></button>`,
     )
     .join("");
 }
 
-function selectTool(toolId) {
-  const tool = tools.find((entry) => entry.id === toolId);
-  if (!tool) return;
-
-  document.querySelectorAll(".station").forEach((station) => {
-    station.setAttribute("aria-pressed", String(station.dataset.toolId === tool.id));
-  });
-
-  detailCode.textContent = tool.code;
-  detailCode.style.backgroundColor = routeColors[tool.line];
-  detailName.textContent = tool.name;
-  detailDescription.textContent = tool.description;
-  detailLine.textContent = routes.find((route) => route.id === tool.line).label;
-  detailStatus.dataset.status = tool.status;
-  detailStatusLabel.textContent = tool.statusLabel;
-  detailActionLabel.textContent = tool.actionLabel;
-
-  detailAction.href = tool.url;
-  detailAction.target = "_blank";
-  detailAction.rel = "noopener noreferrer";
-  detailAction.removeAttribute("aria-disabled");
-  detailAction.removeAttribute("tabindex");
+function setRadius() {
+  const width = window.innerWidth;
+  const radius = width < 672 ? Math.max(245, width * 0.66) : Math.min(520, width * 0.34);
+  document.documentElement.style.setProperty("--radius", `${radius}px`);
 }
 
-validateTools();
-renderRoutes();
-renderDirectory();
-routesElement.addEventListener("click", (event) => {
-  const station = event.target.closest(".station");
-  if (station) selectTool(station.dataset.toolId);
+function normalizeAngle(value) {
+  return ((value + 180) % 360 + 360) % 360 - 180;
+}
+
+function nearestRotation(index) {
+  const base = -index * anglePerCard;
+  return base + Math.round((rotation - base) / 360) * 360;
+}
+
+function rotateTo(index) {
+  const currentSnap = ++snapId;
+  const target = nearestRotation(index);
+  velocity = 0;
+  snapping = true;
+  const start = rotation;
+  const distance = target - start;
+  const startedAt = performance.now();
+  const duration = reducedMotion.matches ? 1 : 560;
+
+  function step(now) {
+    if (currentSnap !== snapId) return;
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 4);
+    rotation = start + distance * eased;
+    if (progress < 1) requestAnimationFrame(step);
+    else snapping = false;
+  }
+
+  requestAnimationFrame(step);
+}
+
+function updateActiveCard() {
+  const nextIndex = ((Math.round(-rotation / anglePerCard) % tools.length) + tools.length) % tools.length;
+  if (nextIndex === activeIndex) return;
+
+  activeIndex = nextIndex;
+  document.querySelectorAll(".gallery-card").forEach((card, index) => {
+    const isActive = index === activeIndex;
+    card.classList.toggle("is-active", isActive);
+    card.querySelector("a").tabIndex = isActive ? 0 : -1;
+  });
+  nav.querySelectorAll("button").forEach((button, index) => {
+    button.setAttribute("aria-current", String(index === activeIndex));
+  });
+  status.textContent = `${tools[activeIndex].name}，第 ${activeIndex + 1} 個，共 ${tools.length} 個`;
+}
+
+function paint() {
+  ring.style.transform = `rotateY(${rotation}deg)`;
+  document.querySelectorAll(".gallery-card").forEach((card, index) => {
+    const distance = Math.abs(normalizeAngle(index * anglePerCard + rotation));
+    const opacity = Math.max(0.18, 1 - distance / 155);
+    card.style.setProperty("--card-opacity", opacity.toFixed(3));
+    card.style.zIndex = String(1000 - Math.round(distance));
+  });
+  updateActiveCard();
+}
+
+function animate(now) {
+  const frameTime = Math.min(32, now - lastFrameTime);
+  lastFrameTime = now;
+
+  if (!dragging && Math.abs(velocity) > 0.004) {
+    rotation += velocity * frameTime;
+    velocity *= Math.pow(0.9, frameTime / (1000 / 60));
+  } else if (!dragging && snapAfterInertia) {
+    velocity = 0;
+    snapAfterInertia = false;
+    rotateTo(activeIndex);
+  }
+
+  paint();
+  requestAnimationFrame(animate);
+}
+
+viewport.addEventListener("pointerdown", (event) => {
+  if (event.button !== 0) return;
+  dragging = true;
+  snapping = false;
+  snapId += 1;
+  dragDistance = 0;
+  pointerX = event.clientX;
+  lastPointerTime = performance.now();
+  lastMoveAt = lastPointerTime;
+  velocity = 0;
+  viewport.setPointerCapture(event.pointerId);
+  document.body.classList.add("is-dragging");
 });
-selectTool(tools[0].id);
+
+viewport.addEventListener("pointermove", (event) => {
+  if (!dragging) return;
+  const now = performance.now();
+  const delta = event.clientX - pointerX;
+  const elapsed = Math.max(4, now - lastPointerTime);
+  const nextVelocity = (delta * dragSensitivity) / elapsed;
+  pointerX = event.clientX;
+  lastPointerTime = now;
+  if (delta !== 0) lastMoveAt = now;
+  dragDistance += Math.abs(delta);
+  velocity = Math.max(-maxVelocity, Math.min(maxVelocity, velocity * 0.65 + nextVelocity * 0.35));
+  rotation += delta * dragSensitivity;
+});
+
+function endDrag(event) {
+  if (!dragging) return;
+  dragging = false;
+  snapAfterInertia = dragDistance > 8;
+  if (!snapAfterInertia || performance.now() - lastMoveAt > 80) velocity = 0;
+  if (viewport.hasPointerCapture(event.pointerId)) viewport.releasePointerCapture(event.pointerId);
+  document.body.classList.remove("is-dragging");
+}
+
+viewport.addEventListener("pointerup", endDrag);
+viewport.addEventListener("pointercancel", endDrag);
+viewport.addEventListener("dragstart", (event) => event.preventDefault());
+
+viewport.addEventListener("click", (event) => {
+  const link = event.target.closest(".gallery-card__link");
+  if (!link) return;
+  const index = Number(link.closest(".gallery-card").dataset.index);
+
+  if (dragDistance > 8 || index !== activeIndex) {
+    event.preventDefault();
+    if (dragDistance <= 8) rotateTo(index);
+  }
+});
+
+viewport.addEventListener("keydown", (event) => {
+  if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+  event.preventDefault();
+
+  if (event.key === "Home") rotateTo(0);
+  if (event.key === "End") rotateTo(tools.length - 1);
+  if (event.key === "ArrowLeft") rotateTo((activeIndex - 1 + tools.length) % tools.length);
+  if (event.key === "ArrowRight") rotateTo((activeIndex + 1) % tools.length);
+});
+
+ring.addEventListener("pointerover", (event) => {
+  if (event.target.closest(".gallery-card__link")) hoverPaused = true;
+});
+
+ring.addEventListener("pointerout", (event) => {
+  if (!event.relatedTarget?.closest?.(".gallery-card__link")) hoverPaused = false;
+});
+
+nav.addEventListener("click", (event) => {
+  const button = event.target.closest("button");
+  if (button) rotateTo(Number(button.dataset.index));
+});
+
+window.addEventListener("resize", setRadius, { passive: true });
+mobileLayout.addEventListener("change", () => {
+  setRadius();
+  rotateTo(activeIndex);
+});
+
+window.setInterval(() => {
+  if (!dragging && !snapping && !hoverPaused && !reducedMotion.matches && !mobileLayout.matches) {
+    rotateTo((activeIndex + 1) % tools.length);
+  }
+}, 9000);
+
+renderGallery();
+setRadius();
+paint();
+requestAnimationFrame(animate);
