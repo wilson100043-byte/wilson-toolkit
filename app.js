@@ -186,8 +186,6 @@ viewport.addEventListener("pointerdown", (event) => {
   lastPointerTime = performance.now();
   lastMoveAt = lastPointerTime;
   velocity = 0;
-  viewport.setPointerCapture(event.pointerId);
-  document.body.classList.add("is-dragging");
 });
 
 viewport.addEventListener("pointermove", (event) => {
@@ -200,6 +198,10 @@ viewport.addEventListener("pointermove", (event) => {
   lastPointerTime = now;
   if (delta !== 0) lastMoveAt = now;
   dragDistance += Math.abs(delta);
+  if (dragDistance > 4 && !viewport.hasPointerCapture(event.pointerId)) {
+    viewport.setPointerCapture(event.pointerId);
+    document.body.classList.add("is-dragging");
+  }
   velocity = Math.max(-maxVelocity, Math.min(maxVelocity, velocity * 0.65 + nextVelocity * 0.35));
   rotation += delta * dragSensitivity;
 });
